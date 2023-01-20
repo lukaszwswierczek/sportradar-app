@@ -7,9 +7,9 @@ import java.io.IOException;
 public class JSONMapper {
 
 
-    public com.sportsradar.model.Events mapJSON() throws IOException {
+    public com.sportradar.model.Events mapJSON() throws IOException {
 
         ObjectMapper mapper = new ObjectMapper();
-        return mapper.readValue(new File("BE_data.json"), com.sportsradar.model.Events.class);
+        return mapper.readValue(new File("BE_data.json"), com.sportradar.model.Events.class);
     }
 }
