@@ -1,4 +1,4 @@
-package com.sportradar.mapper;
+package com.sportradar.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sportradar.model.Events;
@@ -8,7 +8,7 @@ import java.io.File;
 import java.io.IOException;
 
 @Service
-public class JSONMapper {
+public class JSONService {
 
 
     public Events mapJSON() throws IOException {

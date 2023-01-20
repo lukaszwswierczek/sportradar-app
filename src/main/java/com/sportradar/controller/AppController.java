@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.HashSet;
 import java.util.List;
 
 @Controller
@@ -22,10 +23,9 @@ public class AppController {
         return eventService.returnMostProbableResults();
     }
 
-    //in case there are different competitions, the parameter of the method can be changed
     @GetMapping("/teams")
-    public List<String> printTeamsInAGivenCompetition() throws IOException {
-        return eventService.printTeamsInGivenCompetition("UEFA Champions League");
+    public List<String> printTeams() throws IOException {
+        return eventService.printUniqueTeams();
     }
 
 }

@@ -1,5 +1,4 @@
 package com.sportradar.service;
-import com.sportradar.mapper.JSONMapper;
 import com.sportradar.model.Competitor;
 import com.sportradar.model.Event;
 import com.sportradar.model.Events;
@@ -13,22 +12,24 @@ import java.util.*;
 @Service
 public class EventService {
 
-    private final JSONMapper jsonMapper;
+    private final JSONService jsonService;
 
-    public EventService(JSONMapper jsonMapper) {
-        this.jsonMapper = jsonMapper;
+    public EventService(JSONService jsonService) {
+        this.jsonService = jsonService;
     }
 
     public Events setHighestProbableResult() throws IOException {
 
-        Events allEvents = jsonMapper.mapJSON();
+        Events allEvents = jsonService.mapJSON();
         for (Event event : allEvents.getEvents()) {
             if (event.getProbability_draw() > event.getProbability_away_team_winner() && event.getProbability_draw() > event.getProbability_home_team_winner()) {
                 event.setHighest_probable_result(Map.of("DRAW", event.getProbability_draw()));
             } else if (event.getProbability_away_team_winner() > event.getProbability_home_team_winner()) {
-                event.setHighest_probable_result(Map.of("AWAY_TEAM_WIN", event.getProbability_away_team_winner()));
+                List<Competitor> winner = event.getCompetitors().stream().filter(competitor -> competitor.getQualifier().equals("away")).toList();
+                event.setHighest_probable_result(Map.of("AWAY TEAM WIN (" + winner.stream().findFirst().get().getName() + ")", event.getProbability_away_team_winner()));
             } else {
-                event.setHighest_probable_result(Map.of("HOME_TEAM_WIN", event.getProbability_home_team_winner()));
+                List<Competitor> winner = event.getCompetitors().stream().filter(competitor -> competitor.getQualifier().equals("home")).toList();
+                event.setHighest_probable_result(Map.of("HOME TEAM WIN (" + winner.stream().findFirst().get().getName() + ")", event.getProbability_home_team_winner()));
             }
         };
         return allEvents;
@@ -38,7 +39,7 @@ public class EventService {
 
         Events allEvents = setHighestProbableResult();
         List<Event> events = allEvents.getEvents();
-        Collections.sort(events, new Comparator<Event>() {
+        events.sort(new Comparator<Event>() {
             @Override
             public int compare(Event e1, Event e2) {
                 return Double.compare(e2.getHighest_probable_result().values().iterator().next(), e1.getHighest_probable_result().values().iterator().next());
@@ -46,6 +47,7 @@ public class EventService {
         });
 
         List<Event> top10Events = events.subList(0, 10);
+        System.out.println("Top 10 most probable results \n----------");
         printMatchesInfo(top10Events);
         return top10Events;
     }
@@ -64,6 +66,7 @@ public class EventService {
             }
         });
         List<Event> topEvents = events.subList(0, noOfMatches);
+        System.out.println("Top " + noOfMatches + " most probable results \n----------");
         printMatchesInfo(topEvents);
     }
 
@@ -87,37 +90,23 @@ public class EventService {
         }
     }
 
-    public void printUniqueTeams(Events events){
+    public List<String> printUniqueTeams() throws IOException {
 
+        Events allEvents = setHighestProbableResult();
         HashSet<String> uniqueTeams = new HashSet<>();
-        for (Event event : events.getEvents()) {
+        for (Event event : allEvents.getEvents()) {
             List<Competitor> competitors = event.getCompetitors();
             Competitor competitor1 = competitors.get(0);
             Competitor competitor2 = competitors.get(1);
             uniqueTeams.add(competitor1.getName());
             uniqueTeams.add(competitor2.getName());
         }
-//        for (String uniqueTeam : uniqueTeams) {
-//            System.out.println(uniqueTeam);
-//        }
-    }
 
-    public List<String> printTeamsInGivenCompetition(String competitionName) throws IOException {
-
-        Events events = setHighestProbableResult();
-        List<Event> matchingEvents = events.getEvents().stream().filter(event -> event.getCompetition_name().equals(competitionName)).toList();
-        System.out.println("Matches for competition: " + competitionName + "\n----------" );
-        HashSet<String> teamNames = new HashSet<>();
-        for (Event matchingEvent : matchingEvents) {
-            List<Competitor> competitors = matchingEvent.getCompetitors();
-            Competitor competitor1 = competitors.get(0);
-            Competitor competitor2 = competitors.get(1);
-            teamNames.add(competitor1.getName());
-            teamNames.add(competitor2.getName());
-        }
-        List<String> teamNamesList = teamNames.stream().sorted().toList();
-        for (String s : teamNamesList) {
-            System.out.println(s);
+        //sorting & printing
+        List<String> teamNamesList = uniqueTeams.stream().sorted().toList();
+        System.out.println("Teams: \n----------");
+        for (String team : teamNamesList) {
+            System.out.println(team);
         }
         return teamNamesList;
     }
