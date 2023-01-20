@@ -1,16 +1,27 @@
 package com.sportradar.service;
+import com.sportradar.mapper.JSONMapper;
 import com.sportradar.model.Competitor;
 import com.sportradar.model.Event;
 import com.sportradar.model.Events;
+import org.springframework.stereotype.Service;
+
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-
+@Service
 public class EventService {
 
-    public void setHighestProbableResult(Events allEvents) {
+    private final JSONMapper jsonMapper;
 
+    public EventService(JSONMapper jsonMapper) {
+        this.jsonMapper = jsonMapper;
+    }
+
+    public Events setHighestProbableResult() throws IOException {
+
+        Events allEvents = jsonMapper.mapJSON();
         for (Event event : allEvents.getEvents()) {
             if (event.getProbability_draw() > event.getProbability_away_team_winner() && event.getProbability_draw() > event.getProbability_home_team_winner()) {
                 event.setHighest_probable_result(Map.of("DRAW", event.getProbability_draw()));
@@ -20,11 +31,12 @@ public class EventService {
                 event.setHighest_probable_result(Map.of("HOME_TEAM_WIN", event.getProbability_home_team_winner()));
             }
         };
+        return allEvents;
     }
 
-    public void returnMostProbableResults(Events allEvents) throws ParseException {
+    public List<Event> returnMostProbableResults() throws ParseException, IOException {
 
-        setHighestProbableResult(allEvents);
+        Events allEvents = setHighestProbableResult();
         List<Event> events = allEvents.getEvents();
         Collections.sort(events, new Comparator<Event>() {
             @Override
@@ -35,14 +47,15 @@ public class EventService {
 
         List<Event> top10Events = events.subList(0, 10);
         printMatchesInfo(top10Events);
+        return top10Events;
     }
 
-    public void returnMostProbableResults(Events allEvents, int noOfMatches) throws ParseException {
+    public void returnMostProbableResults(int noOfMatches) throws ParseException, IOException {
 
+        Events allEvents = setHighestProbableResult();
         if(noOfMatches < 1 || noOfMatches > 25 ){
             throw new IllegalArgumentException("Please choose no. of matches in a range of 1-25.");
         }
-        setHighestProbableResult(allEvents);
         List<Event> events = allEvents.getEvents();
         Collections.sort(events, new Comparator<Event>() {
             @Override
@@ -74,7 +87,7 @@ public class EventService {
         }
     }
 
-    public void storeAndPrintUniqueTeams(Events events){
+    public void printUniqueTeams(Events events){
 
         HashSet<String> uniqueTeams = new HashSet<>();
         for (Event event : events.getEvents()) {
@@ -89,8 +102,9 @@ public class EventService {
 //        }
     }
 
-    public void printCompetitorsInGivenCompetition(Events events, String competitionName){
+    public List<String> printTeamsInGivenCompetition(String competitionName) throws IOException {
 
+        Events events = setHighestProbableResult();
         List<Event> matchingEvents = events.getEvents().stream().filter(event -> event.getCompetition_name().equals(competitionName)).toList();
         System.out.println("Matches for competition: " + competitionName + "\n----------" );
         HashSet<String> teamNames = new HashSet<>();
@@ -105,6 +119,7 @@ public class EventService {
         for (String s : teamNamesList) {
             System.out.println(s);
         }
+        return teamNamesList;
     }
 
 }
