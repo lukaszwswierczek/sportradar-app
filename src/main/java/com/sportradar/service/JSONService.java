@@ -11,9 +11,9 @@ import java.io.IOException;
 public class JSONService {
 
 
-    public Events mapJSON() throws IOException {
+    public Events mapJSON(String fileName) throws IOException {
 
         ObjectMapper mapper = new ObjectMapper();
-        return mapper.readValue(new File("BE_data.json"), Events.class);
+        return mapper.readValue(new File(fileName), Events.class);
     }
 }

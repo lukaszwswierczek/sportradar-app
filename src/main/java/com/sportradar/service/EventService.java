@@ -18,9 +18,9 @@ public class EventService {
         this.jsonService = jsonService;
     }
 
-    public Events setHighestProbableResult() throws IOException {
+    protected Events setHighestProbableResult() throws IOException {
 
-        Events allEvents = jsonService.mapJSON();
+        Events allEvents = jsonService.mapJSON("BE_data.json");
         for (Event event : allEvents.getEvents()) {
             if (event.getProbability_draw() > event.getProbability_away_team_winner() && event.getProbability_draw() > event.getProbability_home_team_winner()) {
                 event.setHighest_probable_result(Map.of("DRAW", event.getProbability_draw()));
@@ -70,12 +70,12 @@ public class EventService {
         printMatchesInfo(topEvents);
     }
 
-    public Date parseDate(String dateString) throws ParseException {
+    protected Date parseDate(String dateString) throws ParseException {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX");
         return format.parse(dateString);
     }
 
-    public void printMatchesInfo(List<Event> matches) throws ParseException {
+    private void printMatchesInfo(List<Event> matches) throws ParseException {
 
         for (Event event : matches) {
             List<Competitor> competitors = event.getCompetitors();

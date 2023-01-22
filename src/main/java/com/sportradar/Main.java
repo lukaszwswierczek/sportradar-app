@@ -16,7 +16,7 @@ public class Main {
         //print top10 most probable results
 //        eventService.returnMostProbableResults();
         //print most probable results with number in parameter
-//        eventService.returnMostProbableResults(3);
+//        eventService.returnMostProbableResults();
         //print team names
 //        eventService.printUniqueTeams();
     }

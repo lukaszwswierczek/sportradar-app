@@ -1,0 +1,44 @@
+{
+  "Events": [
+    {
+      "sport_event_id": "sr:sport_event:27636100",
+      "start_date": "2021-06-22T18:00:00+00:00",
+      "sport_name": "Soccer",
+      "competition_name": "UEFA Champions League",
+      "competition_id": "sr:competition:7",
+      "season_name": "UEFA Champions League 21/22",
+      "competitors": [
+        {
+          "id": "sr:competitor:37863",
+          "name": "SS Folgore Falciano Calcio",
+          "country": "San Marino",
+          "country_code": "SMR",
+          "abbreviation": "FFC",
+          "qualifier": "home",
+          "gender": "male"
+        },
+        {
+          "id": "sr:competitor:277829",
+          "name": "FC Prishtina",
+          "country": "Kosovo",
+          "country_code": "KOS",
+          "abbreviation": "PRI",
+          "qualifier": "away",
+          "gender": "male"
+        }
+      ],
+      "venue": {
+        "id": "sr:venue:8329",
+        "name": "Elbasan Arena",
+        "capacity": 12500,
+        "city_name": "Elbasan",
+        "country_name": "Albania",
+        "map_coordinates": "41.115875,20.091992",
+        "country_code": "ALB"
+      },
+      "probability_home_team_winner": 2.5,
+      "probability_draw": 88.1,
+      "probability_away_team_winner": 9.4
+    }
+  ]
+}

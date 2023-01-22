@@ -1,15 +1,17 @@
 package com.sportradar.controller;
 import com.sportradar.model.Event;
 import com.sportradar.service.EventService;
-import org.springframework.stereotype.Controller;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.HashSet;
 import java.util.List;
 
-@Controller
+@RestController
 public class AppController {
 
     private final EventService eventService;
@@ -19,13 +21,13 @@ public class AppController {
     }
 
     @GetMapping("/")
-    public List<Event> printInformation() throws ParseException, IOException {
-        return eventService.returnMostProbableResults();
+    public ResponseEntity<List<Event>> printInformation() throws ParseException, IOException {
+        return new ResponseEntity<>(eventService.returnMostProbableResults(), HttpStatus.OK);
     }
 
     @GetMapping("/teams")
-    public List<String> printTeams() throws IOException {
-        return eventService.printUniqueTeams();
+    public ResponseEntity<List<String>> printTeams() throws IOException {
+        return new ResponseEntity<>(eventService.printUniqueTeams(),HttpStatus.OK);
     }
 
 }
