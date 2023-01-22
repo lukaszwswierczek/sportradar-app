@@ -1,14 +1,14 @@
 package com.sportradar.service;
 
-import com.sportradar.model.Competitor;
-import com.sportradar.model.Event;
-import com.sportradar.model.Events;
+import com.sportradar.model.*;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -30,6 +30,20 @@ class EventServiceTest {
         List<String> actualTeams = eventService.printUniqueTeams();
 
         //assertion
-        assertEquals(expectedTeams,actualTeams);
+        assertEquals(expectedTeams, actualTeams);
+    }
+
+    @Test
+    void testConvertToDto() {
+
+        //expected output
+        List<EventDto> expectedEventDto = Arrays.asList(new EventDto("2021-06-22T18:00:00+00:00", "UEFA Champions League", List.of(new Competitor("SS Folgore Falciano Calcio", "San Marino", "home"), new Competitor("FC Prishtina", "Kosovo", "away")), new Venue("Elbasan Arena"), 2.5, 88.1, 9.4, Map.of("DRAW", 88.1)));
+
+        //actual output
+        EventService service = new EventService(new JSONService());
+        List<Event> event = Arrays.asList(new Event("2021-06-22T18:00:00+00:00", "UEFA Champions League", List.of(new Competitor("SS Folgore Falciano Calcio", "San Marino", "home"), new Competitor("FC Prishtina", "Kosovo", "away")), new Venue("Elbasan Arena"), 2.5, 88.1, 9.4, Map.of("DRAW", 88.1)));
+        List<EventDto> actualEventsDto = service.convertToDto(event);
+
+        assertThat(actualEventsDto).usingRecursiveComparison().isEqualTo(expectedEventDto);
     }
 }

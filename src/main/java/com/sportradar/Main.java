@@ -14,9 +14,9 @@ public class Main {
         EventService eventService = new EventService(jsonService);
 
         //print top10 most probable results
-//        eventService.returnMostProbableResults();
+        eventService.returnMostProbableResults();
         //print most probable results with number in parameter
-//        eventService.returnMostProbableResults();
+//        eventService.returnMostProbableResults(4);
         //print team names
 //        eventService.printUniqueTeams();
     }

@@ -1,7 +1,9 @@
 package com.sportradar.service;
 import com.sportradar.model.Competitor;
 import com.sportradar.model.Event;
+import com.sportradar.model.EventDto;
 import com.sportradar.model.Events;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -52,7 +54,7 @@ public class EventService {
         return top10Events;
     }
 
-    public void returnMostProbableResults(int noOfMatches) throws ParseException, IOException {
+    public List<Event> returnMostProbableResults(int noOfMatches) throws ParseException, IOException {
 
         Events allEvents = setHighestProbableResult();
         if(noOfMatches < 1 || noOfMatches > 25 ){
@@ -68,6 +70,7 @@ public class EventService {
         List<Event> topEvents = events.subList(0, noOfMatches);
         System.out.println("Top " + noOfMatches + " most probable results \n----------");
         printMatchesInfo(topEvents);
+        return topEvents;
     }
 
     protected Date parseDate(String dateString) throws ParseException {
@@ -109,6 +112,15 @@ public class EventService {
             System.out.println(team);
         }
         return teamNamesList;
+    }
+
+    public List<EventDto> convertToDto(List<Event> events){
+        List<EventDto> eventDtos = new ArrayList<>();
+        ModelMapper mapper = new ModelMapper();
+        for (Event event : events) {
+            eventDtos.add(mapper.map(event, EventDto.class));
+        }
+        return eventDtos;
     }
 
 }
